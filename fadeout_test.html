@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>縦書きフェード</title>
+  <style>
+    body {
+      background-color: #333;
+      color: #fff;
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    .fade-container {
+      display: flex;
+      flex-direction: column;
+      text-align: center;
+      writing-mode: vertical-rl;
+      font-size: 2.5em;
+      line-height: 1;
+      /* position: relative; /* 要素の相対位置指定 */
+    }
+
+    .fade-item {
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+      position: absolute;
+    }
+  </style>
+</head>
+<body>
+  <div class="fade-container" id="fadeContainer"></div>
+
+  <script>
+    const fadeContainer = document.getElementById('fadeContainer');
+    let currentIndex = 0;
+    let isTransitioning = false; // フェードアウト中かどうかのフラグを追加
+
+    const dataArray = [
+      "　私はその人を常に先生と呼んでいた。",
+      "だからここでもただ先生と書くだけで本名は打ち明けない。",
+      "これは世間を憚かる遠慮というよりも、その方が私にとって自然だからである。",
+      "私はその人の記憶を呼び起すごとに、すぐ「先生」といいたくなる。",
+      "筆を執っても心持は同じ事である。",
+      "よそよそしい頭文字などはとても使う気にならない。",
+      "配列7の文字列",
+      "配列8の文字列",
+      "配列9の文字列",
+      "配列10の文字列"
+    ];
+
+    function showNextItem() {
+      if (isTransitioning) return; // フェードアウト中は処理しない
+      isTransitioning = true; // フェードアウト中フラグを立てる
+
+      const fadeItems = document.querySelectorAll('.fade-item');
+      fadeItems[currentIndex].style.opacity = 0; // フェードアウト
+
+      // フェードアウトが完了したら次の要素を表示
+      fadeItems[currentIndex].addEventListener('transitionend', function handler() {
+        fadeItems[currentIndex].removeEventListener('transitionend', handler); // イベントハンドラを削除
+        currentIndex = (currentIndex + 1) % fadeItems.length;
+        
+        // 次の要素を表示
+        const nextItem = fadeItems[currentIndex];
+        nextItem.style.opacity = 1;
+        nextItem.style.transition = 'none';
+        nextItem.style.top = `${fadeItems[currentIndex].offsetTop}px`;
+        nextItem.offsetHeight;
+        nextItem.style.transition = '';
+
+        isTransitioning = false; // フェードアウト完了後にフラグを戻す
+      });
+    }
+
+    function renderData() {
+      fadeContainer.innerHTML = '';
+
+      dataArray.forEach((itemText, index) => {
+        const fadeItem = document.createElement('div');
+        fadeItem.classList.add('fade-item');
+        fadeItem.textContent = itemText;
+        fadeItem.style.opacity = index === currentIndex ? 1 : 0;
+        fadeContainer.appendChild(fadeItem);
+      });
+    }
+
+    fadeContainer.addEventListener('click', showNextItem);
+    renderData();
+  </script>
+</body>
+</html>
+
